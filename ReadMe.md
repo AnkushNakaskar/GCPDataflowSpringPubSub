@@ -15,4 +15,5 @@ Things to check in project :
 This will submit the job to dataflow in GCP project. 
 * You might get exception in submitting the job as 'Current user cant run as service account'
    * This can be overcome by setting the role as 'service account' in 'Iam'
+   * link : https://stackoverflow.com/questions/53739459/dataflow-setting-controller-service-account
 * After you run gradle cmd , Job will be submitted and it will run.there,where you can monitor the logs. and job status.
