@@ -1,0 +1,68 @@
+buildscript {
+    ext {
+        springBootVersion = '2.0.4.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+        classpath('io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE')
+    }
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'maven'
+apply plugin: "jacoco"
+apply plugin: 'io.spring.dependency-management'
+apply plugin: 'project-report'
+apply plugin: 'application'
+group 'com.dataflow.gcp'
+version '1.0-SNAPSHOT'
+mainClassName = System.getProperty("mainClass")
+
+task runApp(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+
+    main = 'com.dataflow.gcp.StartPipeline'
+
+    // arguments to pass to the application
+    args '--runner=DirectRunner'
+}
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    maven {
+        url "https://repo.spring.io/milestone"
+    }
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile 'org.slf4j:slf4j-nop:1.7.25'
+
+    // Data flow
+        compile group: 'org.apache.beam', name: 'beam-sdks-java-core', version: '2.8.0'
+        compile group: 'org.apache.beam', name: 'beam-runners-google-cloud-dataflow-java', version: '2.8.0'
+//    compile group: 'com.google.cloud.dataflow', name: 'google-cloud-dataflow-java-sdk-all'
+    compile group: 'com.google.cloud.dataflow', name: 'google-cloud-dataflow-java-sdk-all', version: '2.5.0'
+
+
+    //Commons
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.8.1'
+    compile group: 'org.apache.commons', name: 'commons-collections4', version: '4.2'
+
+    //Jackson
+    runtime group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.8.5'
+    runtime group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-xml', version: '2.8.5'
+
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.2'
+
+}
