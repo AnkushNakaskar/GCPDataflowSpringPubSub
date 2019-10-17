@@ -30,6 +30,7 @@ task runApp(type: JavaExec) {
 
     // arguments to pass to the application
     args '--runner=DirectRunner'
+    //args '--runner=DataflowRunner
 }
 
 

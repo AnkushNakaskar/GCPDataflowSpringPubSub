@@ -1,8 +1,10 @@
 package com.dataflow.gcp;
 
 import com.dataflow.gcp.options.PubSubToGCSOptions;
+import com.google.api.services.dataflow.Dataflow;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import org.apache.beam.runners.dataflow.DataflowRunner;
 import org.apache.beam.sdk.Pipeline;
 import org.apache.beam.sdk.io.gcp.pubsub.PubsubIO;
 import org.apache.beam.sdk.options.PipelineOptionsFactory;
@@ -12,8 +14,10 @@ import org.joda.time.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -45,16 +49,17 @@ public class StartPipeline {
                 "https://www.googleapis.com/auth/datastore",
                 "https://www.googleapis.com/auth/pubsub");
 
-//        options.setKeyFilePath("/Users/ankushnakaskar/Office/newCode/content-adapter-logging/key.json");
 
+        String inputCredString ="";//Paste the credential string here in variables
 
-        FileInputStream fileInputStream = new FileInputStream("key.json");
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(
+                inputCredString.getBytes(StandardCharsets.UTF_8));
 
-        GoogleCredentials credentials = ServiceAccountCredentials.fromStream(fileInputStream).createScoped(SCOPES);
+        GoogleCredentials credentials = ServiceAccountCredentials.fromStream(byteArrayInputStream).createScoped(SCOPES);
 
 
         options.setGcpCredential(credentials);
-        options.setServiceAccount("<service account>");
+        options.setServiceAccount("ankushsampledatastore@<projectid>.iam.gserviceaccount.com");
 
 
         Pipeline pipeline = Pipeline.create(options);
@@ -68,7 +73,8 @@ public class StartPipeline {
                 .apply("Write Files to GCS", PubsubIO.writeStrings().to(options.getOutputTopic()));
 
         // Execute the pipeline and wait until it finishes running.
-        pipeline.run().waitUntilFinish();
+
+        DataflowRunner.fromOptions(options).run(pipeline);
 
 
     }
